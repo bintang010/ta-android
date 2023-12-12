@@ -2,18 +2,29 @@ package com.example.jkt48aplikasi;
 
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
+
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 
 /**
  * A simple {@link Fragment} subclass.
  * Use the {@link LocationFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class LocationFragment extends Fragment {
+public class LocationFragment extends Fragment implements OnMapReadyCallback {
+
+    private GoogleMap mMap;
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -23,6 +34,7 @@ public class LocationFragment extends Fragment {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
+    private TextView locationTextView;
 
     public LocationFragment() {
         // Required empty public constructor
@@ -58,7 +70,33 @@ public class LocationFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_location, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_location, container, false);
+
+        // Inisialisasi MapFragment
+        SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager()
+                .findFragmentById(R.id.map);
+
+        if (mapFragment != null) {
+            mapFragment.getMapAsync(this);
+        }
+
+        // Inisialisasi locationTextView
+        locationTextView = rootView.findViewById(R.id.location); // Pastikan ID TextView-nya sesuai dengan layout XML Anda
+
+        return rootView;
+    }
+
+
+    @Override
+    public void onMapReady(@NonNull GoogleMap googleMap) {
+        mMap = googleMap;
+
+        // Tambahkan marker atau atur peta sesuai kebutuhan Anda
+        LatLng jkt48Location = new LatLng(-6.224692, 106.804018); // Ganti dengan koordinat lokasi JKT48
+        mMap.addMarker(new MarkerOptions().position(jkt48Location).title("JKT48 Location"));
+        float zoom=15;
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(jkt48Location, zoom));
+        String jkt48Coordinates = "Latitude: " + jkt48Location.latitude + "\nLongitude: " + jkt48Location.longitude;
+        locationTextView.setText(jkt48Coordinates);
     }
 }
